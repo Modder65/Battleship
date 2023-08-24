@@ -49,3 +49,7 @@ h2 {
   background-color: grey;
   cursor: not-allowed;
 }
+
+.computer-ship {
+  background-color: #00f /* same color as the board's background */;
+}

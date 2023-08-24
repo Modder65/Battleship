@@ -16,7 +16,10 @@ function initializeGame() {
   renderGameboards();
   document
     .getElementById("rotate-button")
-    .addEventListener("click", rotateShip); // Add this line
+    .addEventListener("click", rotateShip);
+  document
+    .getElementById("start-game-button")
+    .addEventListener("click", startGame);
 }
 
 function rotateShip() {
@@ -82,14 +85,24 @@ function placeShip(e) {
     if (currentShipIndex >= shipLengths.length) {
       // All ships have been placed
       // You can add code here to transition to the next phase of the game
+      document.getElementById("start-game-button").disabled = false;
     }
   }
 }
 
 function renderGameboards() {
   let gridContainer = document.getElementById("grid-container");
+  let computerGridContainer = document.getElementById(
+    "computer-grid-container"
+  );
   gridContainer.innerHTML = "";
+  computerGridContainer.innerHTML = "";
   gridContainer.appendChild(createGrid());
+  computerGridContainer.appendChild(createGrid()); // Create computer's grid
+}
+
+function startGame() {
+  document.getElementById("computer-board").style.display = "block";
 }
 
 initializeGame();

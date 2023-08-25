@@ -14,6 +14,7 @@ let computer = new Player(true);
 let shipLengths = [5, 4, 3, 3, 2];
 let currentShipIndex = 0;
 let orientation = "horizontal";
+let computerCells;
 
 // Function to initialize the game
 function initializeGame() {
@@ -119,8 +120,8 @@ function placeComputerShips() {
 
       // Check if the ship would be out of bounds
       if (
-        (randomOrientation === "horizontal" && startColumn + length > 10) ||
-        (randomOrientation === "vertical" && startRow + length > 10)
+        (randomOrientation === "horizontal" && startColumn + length > 9) ||
+        (randomOrientation === "vertical" && startRow + length > 9)
       ) {
         continue; // Skip this iteration and try again
       }
@@ -178,6 +179,7 @@ function renderGameboards() {
   computerGridContainer.innerHTML = "";
   gridContainer.appendChild(createGrid());
   computerGridContainer.appendChild(createGrid()); // Create computer's grid
+  computerCells = Array.from(computerGridContainer.children[0].children); // Get reference to computer's cells
 }
 
 // Function to start the game by displaying the computer's board
@@ -187,6 +189,37 @@ function startGame() {
   document.getElementById("start-game-button").style.display = "none";
   document.getElementById("rotate-button").style.display = "none";
   placeComputerShips();
+  computerCells.forEach((cell) => {
+    cell.addEventListener("click", playerTurn);
+  });
+}
+
+// Function to handle the player's turn
+function playerTurn(e) {
+  let index = computerCells.indexOf(e.target);
+  if (index === -1) return; // Check if the target element is part of the expected array
+
+  let row = Math.floor(index / 10);
+  let col = index % 10;
+
+  let hit = computer.gameBoard.receiveAttack(row, col);
+  e.target.style.backgroundColor = hit ? "red" : "purple";
+  computerTurn();
+}
+
+// Function to handle the computer's turn
+function computerTurn() {
+  let [row, col] = computer.makeRandomMove(player.gameBoard); // Make sure to pass the player's gameboard
+
+  // Check if the attack coordinates are valid
+  let hit = player.gameBoard.ships.some((shipEntry) =>
+    shipEntry.coordinates.some(
+      (coord) => coord.row === row && coord.column === col
+    )
+  );
+  let playerCells = Array.from(document.getElementById("grid").children);
+  let index = row * 10 + col;
+  playerCells[index].style.backgroundColor = hit ? "red" : "purple"; // Change color to red if hit, purple if miss
 }
 
 // Call initializeGame to start the game setup

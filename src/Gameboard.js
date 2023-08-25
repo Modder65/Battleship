@@ -58,6 +58,7 @@ export class Gameboard {
     if (!hit) {
       this.missedHits.push({ row, column });
     }
+    return hit; // Return the hit value to indicate whether it was a hit or miss
   }
 
   allShipsSunk() {

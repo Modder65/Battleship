@@ -24,5 +24,6 @@ export class Player {
     );
 
     this.attack(enemyGameboard, row, column);
+    return [row, column]; // Return the row and column as an array
   }
 }

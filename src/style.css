@@ -1,55 +1,102 @@
+html,
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
   margin: 0;
   padding: 0;
 }
 
-.container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+header {
+  background-color: #3483eb;
+  text-align: center;
+  padding: 15px;
+  margin-bottom: 20px;
 }
 
-.board {
-  width: 320px;
-  border: 2px solid #000;
-  padding: 10px;
-  background-color: #fff;
-  text-align: center;
+h1 {
+  margin: 0;
+  color: #ffffff;
 }
 
 h2 {
-  margin-bottom: 10px;
+  color: #ffffff;
 }
 
-#grid {
+.content {
+  display: flex;
+  justify-content: space-around;
+}
+
+.userBoardContainer,
+.computerBoardContainer {
+  background-color: #3483eb;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 450px;
+}
+
+.userGridContainer,
+.computerGridContainer {
   display: grid;
-  grid-template-columns: repeat(10, 30px);
-  grid-template-rows: repeat(10, 30px);
-  gap: 2px;
+  grid-template-rows: repeat(10, 1fr); /* 10 rows */
+  grid-template-columns: repeat(10, 1fr); /* 10 columns */
+  background-color: #ffffff;
+  width: 450px;
+  height: 450px;
+  border: 1px solid black;
 }
 
-.cell {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #000;
-  background-color: #e0e0e0;
+.grid-cell-user,
+.grid-cell-computer {
+  background-color: #ffffff;
+  border: 1px solid black;
+}
+
+#rotateButton {
+  margin-bottom: 15px;
+  width: 100px;
+  height: 50px;
+  background-color: #ffffff;
+  color: black;
+  border: none;
+  border: 2px solid black;
+  border-radius: 5px;
+  text-align: center;
+  padding: 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#startButton {
+  margin-top: 15px;
+  width: 100px;
+  height: 75px;
+  background-color: #ffffff;
+  color: black;
+  border: none;
+  border: 2px solid black;
+  border-radius: 5px;
+  text-align: center;
+  padding: 10px;
+  font-size: 18px;
+  cursor: pointer;
 }
 
 .highlight {
-  background-color: #ff0;
+  background-color: yellow;
 }
 
-.ship {
-  background-color: #00f;
+.ship-placed {
+  background-color: #3483eb;
 }
 
-#start-game-button:disabled {
-  background-color: grey;
-  cursor: not-allowed;
+.computerShip-placed {
+  background-color: #ffffff;
 }
 
-.computer-ship {
-  background-color: #00f /* same color as the board's background */;
+.disabled {
+  display: none;
 }

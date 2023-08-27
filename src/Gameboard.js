@@ -4,64 +4,53 @@ export class Gameboard {
   constructor() {
     this.ships = [];
     this.missedHits = [];
-    this.takenSpots = [];
+    this.allAttacks = [];
+    this.sunkenShips = new Set();
   }
 
   placeShip(length, orientation, startRow, startColumn) {
-    let coordinates = [];
-    const ship = new Ship(length);
-    let tempTakenSpots = []; // Temporary array to hold spots being considered
+    const coordinates = [];
+    for (let i = 0; i < length; i++) {
+      let row = startRow + (orientation === "vertical" ? i : 0);
+      let column = startColumn + (orientation === "horizontal" ? i : 0);
 
-    for (let i = 0; i < ship.length; i++) {
-      let row = orientation === "horizontal" ? startRow : startRow + i;
-      let column = orientation === "horizontal" ? startColumn + i : startColumn;
+      if (row >= 10 || column >= 10) return false;
 
-      // Check if the spot is taken or if the ship overflows the board
       if (
-        row >= 10 ||
-        column >= 10 ||
-        this.takenSpots.some(
-          (spot) => spot.row === row && spot.column === column
+        this.ships.some((shipEntry) =>
+          shipEntry.coordinates.some(
+            (coord) => coord.row === row && coord.column === column
+          )
         )
       ) {
-        alert("spot is taken or out of bounds, choose another spot");
-        return; // Return without placing the ship
+        return false;
       }
 
       coordinates.push({ row, column });
-      tempTakenSpots.push({ row, column }); // Add the spot to the temporary array
     }
 
-    // If placement is successful, add the temporary spots to the takenSpots array
-    this.takenSpots = this.takenSpots.concat(tempTakenSpots);
-
-    let shipEntry = { ship, coordinates };
+    const ship = new Ship(length);
+    const shipEntry = { ship, coordinates };
     this.ships.push(shipEntry);
-    return shipEntry; // Return the ship entry to indicate success
+    return true;
   }
 
   receiveAttack(row, column) {
-    let hit = false;
+    let wasHit = false;
     for (let i = 0; i < this.ships.length; i++) {
       for (let j = 0; j < this.ships[i].coordinates.length; j++) {
         if (
-          row == this.ships[i].coordinates[j].row &&
-          column == this.ships[i].coordinates[j].column
+          row === this.ships[i].coordinates[j].row &&
+          column === this.ships[i].coordinates[j].column
         ) {
-          this.ships[i].ship.hit();
-          hit = true;
+          this.ships[i].ship.hit(); // Make sure this line is actually being executed
+          wasHit = true;
           break;
         }
       }
-      if (hit) break;
+      if (wasHit) break;
     }
-    if (!hit) {
-      this.missedHits.push({ row, column });
-    }
-    return hit; // Return the hit value to indicate whether it was a hit or miss
-  }
-
-  allShipsSunk() {
-    return this.ships.every((shipEntry) => shipEntry.ship.isSunk());
+    this.allAttacks.push({ row, column });
+    return wasHit;
   }
 }

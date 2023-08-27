@@ -4,164 +4,178 @@ import "./Gameboard.js";
 import "./Player.js";
 import "./style.css";
 
-import { Ship } from "./Ship.js";
 import { Gameboard } from "./Gameboard.js";
 import { Player } from "./Player.js";
 
-// Initialize player, ship lengths, current ship index, and orientation
-let player = new Player(false);
-let computer = new Player(true);
-let shipLengths = [5, 4, 3, 3, 2];
-let currentShipIndex = 0;
-let orientation = "horizontal";
-let computerCells;
+let userBoard = new Gameboard();
+let computerBoard = new Gameboard();
 
-// Function to initialize the game
-function initializeGame() {
-  renderGameboards();
-  document
-    .getElementById("rotate-button")
-    .addEventListener("click", rotateShip);
-  document
-    .getElementById("start-game-button")
-    .addEventListener("click", startGame);
-}
+let user = new Player();
+let computer = new Player();
 
-// Function to rotate the ship orientation
-function rotateShip() {
-  orientation = orientation === "horizontal" ? "vertical" : "horizontal";
-}
+let currentShipLength = 5;
+let shipsPlaced = 0;
+let currentOrientation = "horizontal";
 
-// Function to create the grid for the gameboard
-function createGrid() {
-  let grid = document.createElement("div");
-  grid.id = "grid";
-  for (let i = 0; i < 100; i++) {
-    let cell = document.createElement("div");
-    cell.className = "cell";
-    cell.addEventListener("mouseover", highlightShip);
-    cell.addEventListener("click", placeShip);
-    grid.appendChild(cell);
+let userRedSquares = 0;
+let computerRedSquares = 0;
+let gameEnded = false;
+
+const rotateButton = document.querySelector("#rotateButton");
+const startButton = document.querySelector("#startButton");
+const startOverButton = document.querySelector(".startOverButton");
+
+rotateButton.addEventListener("click", function () {
+  currentOrientation =
+    currentOrientation === "horizontal" ? "vertical" : "horizontal";
+});
+
+startButton.addEventListener("click", function () {
+  if (shipsPlaced !== 5) {
+    alert("you Havent finished placing all of your ships");
+    return;
+  } else {
+    document
+      .querySelector(".computerBoardContainer")
+      .classList.remove("disabled");
+
+    rotateButton.classList.add("disabled");
+    startButton.classList.add("disabled");
+    placeComputerShips();
+    let computerGridCells = document.querySelectorAll(".grid-cell-computer");
+    computerGridCells.forEach((cell) => {
+      cell.addEventListener("click", handleUserAttack);
+    });
   }
-  return grid;
-}
+});
 
-// Function to highlight the ship on hover
-function highlightShip(e) {
-  let grid = document.getElementById("grid");
-  let cells = Array.from(grid.children);
-  let index = cells.indexOf(e.target);
-  let length = shipLengths[currentShipIndex]; // Get the length of the current ship
+startOverButton.addEventListener("click", function () {
+  // Reload the page to start over
+  location.reload();
+});
 
-  cells.forEach((cell) => cell.classList.remove("highlight"));
+function createGrid(player) {
+  let gridContainer = document.querySelector(`.${player}GridContainer`);
+  let row = 0;
+  let col = 0;
 
-  // Highlight cells based on orientation
-  for (let i = 0; i < length; i++) {
-    let nextIndex = orientation === "horizontal" ? index + i : index + i * 10;
-    if (nextIndex < cells.length) {
-      cells[nextIndex].classList.add("highlight");
+  for (let i = 0; i < 100; i++) {
+    let gridCell = document.createElement("div");
+    gridContainer.appendChild(gridCell);
+    gridCell.classList.add(`grid-cell-${player}`);
+    gridCell.setAttribute("data-row", row);
+    gridCell.setAttribute("data-col", col);
+
+    if (player == "user") {
+      gridCell.addEventListener("mouseover", highlightPlacement);
+      gridCell.addEventListener("click", confirmPlacement);
+    }
+
+    col++;
+    if (col === 10) {
+      col = 0;
+      row++;
     }
   }
 }
 
-// Function to place the ship on click
-function placeShip(e) {
-  let grid = document.getElementById("grid");
-  let cells = Array.from(grid.children);
-  let index = cells.indexOf(e.target);
+function highlightPlacement(event) {
+  const hoveredCell = event.target;
+  const row = parseInt(hoveredCell.getAttribute("data-row"));
+  const col = parseInt(hoveredCell.getAttribute("data-col"));
 
-  let startRow = Math.floor(index / 10);
-  let startColumn = index % 10;
+  const previouslyHighlighted = document.querySelectorAll(".highlight");
+  previouslyHighlighted.forEach((cell) => cell.classList.remove("highlight"));
 
-  let length = shipLengths[currentShipIndex]; // Current ship length
+  for (let i = 0; i < currentShipLength; i++) {
+    let cellToHighlight;
+    if (currentOrientation === "horizontal") {
+      cellToHighlight = document.querySelector(
+        `[data-row='${row}'][data-col='${col + i}']`
+      );
+    } else {
+      cellToHighlight = document.querySelector(
+        `[data-row='${row + i}'][data-col='${col}']`
+      );
+    }
+    if (cellToHighlight) {
+      cellToHighlight.classList.add("highlight");
+    }
+  }
+}
 
-  // Place the ship on the player's gameboard
-  let success = player.gameBoard.placeShip(
-    length,
-    orientation,
+function confirmPlacement(event) {
+  let startRow = parseInt(event.target.getAttribute("data-row"));
+  let startColumn = parseInt(event.target.getAttribute("data-col"));
+
+  const result = userBoard.placeShip(
+    currentShipLength,
+    currentOrientation,
     startRow,
     startColumn
   );
 
-  // If the ship is successfully placed, move to the next ship
-  if (success) {
-    for (let i = 0; i < length; i++) {
-      let nextIndex = orientation === "horizontal" ? index + i : index + i * 10;
-      if (nextIndex < cells.length) {
-        cells[nextIndex].classList.add("ship");
-        cells[nextIndex].classList.remove("highlight");
-      }
-    }
-    currentShipIndex++; // Move to the next ship
-    if (currentShipIndex >= shipLengths.length) {
-      // Enable the start game button if all ships have been placed
-      document.getElementById("start-game-button").disabled = false;
-    }
+  if (result === false) {
+    alert("Illegal placement, either out of bounds or on taken spot");
+    return;
+  }
+
+  let highlighted = document.querySelectorAll(".highlight");
+  highlighted.forEach((cell) => {
+    cell.classList.remove("highlight");
+    cell.classList.add("ship-placed");
+  });
+
+  shipsPlaced++;
+
+  if (shipsPlaced === 1) {
+    currentShipLength = 4;
+  } else if (shipsPlaced === 2 || shipsPlaced === 3) {
+    currentShipLength = 3;
+  } else if (shipsPlaced === 4) {
+    currentShipLength = 2;
+  }
+
+  if (shipsPlaced === 5) {
+    let userGridCells = document.querySelectorAll(".grid-cell-user");
+    userGridCells.forEach((cell) => {
+      cell.removeEventListener("mouseover", highlightPlacement);
+      cell.removeEventListener("click", confirmPlacement);
+    });
   }
 }
 
-// Function to randomly place the computer's ships
 function placeComputerShips() {
-  let computerGridContainer = document.getElementById(
-    "computer-grid-container"
-  );
-  let computerCells = Array.from(computerGridContainer.children[0].children);
+  const shipLengths = [5, 4, 3, 3, 2];
+  const orientations = ["horizontal", "vertical"];
 
-  // Iterate through the ship lengths to place each ship
   shipLengths.forEach((length) => {
-    let success = false;
+    let placed = false;
 
-    // Keep trying to place the ship until successful
-    while (!success) {
-      let randomIndex = Math.floor(Math.random() * 100);
-      let randomOrientation = Math.random() < 0.5 ? "horizontal" : "vertical";
-      let startRow = Math.floor(randomIndex / 10);
-      let startColumn = randomIndex % 10;
+    while (!placed) {
+      const randomRow = Math.floor(Math.random() * 10);
+      const randomCol = Math.floor(Math.random() * 10);
+      const randomOrientation =
+        orientations[Math.floor(Math.random() * orientations.length)];
 
-      // Check if the ship would be out of bounds
-      if (
-        (randomOrientation === "horizontal" && startColumn + length > 9) ||
-        (randomOrientation === "vertical" && startRow + length > 9)
-      ) {
-        continue; // Skip this iteration and try again
-      }
-
-      // Check if the ship would be connected to another ship
-      let connected = false;
-      for (let i = -1; i <= length; i++) {
-        let row = randomOrientation === "horizontal" ? startRow : startRow + i;
-        let column =
-          randomOrientation === "horizontal" ? startColumn + i : startColumn;
-
-        if (
-          computer.gameBoard.takenSpots.some(
-            (spot) => spot.row === row && spot.column === column
-          )
-        ) {
-          connected = true;
-          break;
-        }
-      }
-      if (connected) continue; // Skip this iteration and try again
-
-      // Attempt to place the ship on the computer's gameboard
-      success = computer.gameBoard.placeShip(
+      placed = computerBoard.placeShip(
         length,
         randomOrientation,
-        startRow,
-        startColumn
+        randomRow,
+        randomCol
       );
 
-      // If successful, update the UI (optional, as the computer's ships are hidden)
-      if (success) {
+      if (placed) {
+        // Update the UI to reflect the ship placement
         for (let i = 0; i < length; i++) {
-          let nextIndex =
-            randomOrientation === "horizontal"
-              ? randomIndex + i
-              : randomIndex + i * 10;
-          if (nextIndex < computerCells.length) {
-            // You can add a class to style the computer's ships if needed
-            computerCells[nextIndex].classList.add("computer-ship");
+          let row = randomRow + (randomOrientation === "vertical" ? i : 0);
+          let col = randomCol + (randomOrientation === "horizontal" ? i : 0);
+
+          const cell = document.querySelector(
+            `.grid-cell-computer[data-row='${row}'][data-col='${col}']`
+          );
+          if (cell) {
+            cell.classList.add("computerShip-placed");
           }
         }
       }
@@ -169,58 +183,83 @@ function placeComputerShips() {
   });
 }
 
-// Function to render both player's and computer's gameboards
-function renderGameboards() {
-  let gridContainer = document.getElementById("grid-container");
-  let computerGridContainer = document.getElementById(
-    "computer-grid-container"
+function handleUserAttack(event) {
+  const row = parseInt(event.target.getAttribute("data-row"));
+  const column = parseInt(event.target.getAttribute("data-col"));
+
+  const result = user.attack(computerBoard, row, column);
+
+  if (result === "That move has already been made, choose another") {
+    alert(result);
+    return;
+  }
+
+  const wasHit = computerBoard.receiveAttack(row, column);
+  const cell = document.querySelector(
+    `.grid-cell-computer[data-row='${row}'][data-col='${column}']`
   );
-  gridContainer.innerHTML = "";
-  computerGridContainer.innerHTML = "";
-  gridContainer.appendChild(createGrid());
-  computerGridContainer.appendChild(createGrid()); // Create computer's grid
-  computerCells = Array.from(computerGridContainer.children[0].children); // Get reference to computer's cells
+
+  if (wasHit) {
+    cell.style.backgroundColor = "red";
+    computerRedSquares++;
+  } else {
+    cell.style.backgroundColor = "purple";
+  }
+
+  if (!gameEnded) {
+    gameOver();
+  }
+  handleComputerAttack();
 }
 
-// Function to start the game by displaying the computer's board
-// Hides the rotate and start button after game is started
-function startGame() {
-  document.getElementById("computer-board").style.display = "block";
-  document.getElementById("start-game-button").style.display = "none";
-  document.getElementById("rotate-button").style.display = "none";
-  placeComputerShips();
-  computerCells.forEach((cell) => {
-    cell.addEventListener("click", playerTurn);
+function handleComputerAttack() {
+  const { row, column } = computer.makeRandomMove(userBoard);
+  computer.attack(userBoard, row, column);
+
+  const wasHit = userBoard.receiveAttack(row, column);
+  const cell = document.querySelector(
+    `.grid-cell-user[data-row='${row}'][data-col='${column}']`
+  );
+
+  if (wasHit) {
+    cell.style.backgroundColor = "red";
+    userRedSquares++;
+  } else {
+    cell.style.backgroundColor = "purple";
+  }
+
+  if (!gameEnded) {
+    gameOver();
+  }
+}
+
+function checkIfSunk(gameboard, player) {
+  gameboard.ships.forEach((shipEntry) => {
+    if (shipEntry.ship.isSunk() && !gameboard.sunkenShips.has(shipEntry)) {
+      gameboard.sunkenShips.add(shipEntry);
+      if (player === "user") {
+        userSunkenShips++;
+      } else {
+        computerSunkenShips++;
+      }
+    }
   });
 }
 
-// Function to handle the player's turn
-function playerTurn(e) {
-  let index = computerCells.indexOf(e.target);
-  if (index === -1) return; // Check if the target element is part of the expected array
+function gameOver() {
+  checkIfSunk(userBoard, "user");
+  checkIfSunk(computerBoard, "computer");
 
-  let row = Math.floor(index / 10);
-  let col = index % 10;
-
-  let hit = computer.gameBoard.receiveAttack(row, col);
-  e.target.style.backgroundColor = hit ? "red" : "purple";
-  computerTurn();
+  if (userRedSquares == 17) {
+    alert("Computer wins!");
+    startOverButton.classList.remove("disabled");
+    gameEnded = true; // Set gameEnded to true
+  } else if (computerRedSquares == 17) {
+    alert("User wins!");
+    startOverButton.classList.remove("disabled");
+    gameEnded = true; // Set gameEnded to true
+  }
 }
 
-// Function to handle the computer's turn
-function computerTurn() {
-  let [row, col] = computer.makeRandomMove(player.gameBoard); // Make sure to pass the player's gameboard
-
-  // Check if the attack coordinates are valid
-  let hit = player.gameBoard.ships.some((shipEntry) =>
-    shipEntry.coordinates.some(
-      (coord) => coord.row === row && coord.column === col
-    )
-  );
-  let playerCells = Array.from(document.getElementById("grid").children);
-  let index = row * 10 + col;
-  playerCells[index].style.backgroundColor = hit ? "red" : "purple"; // Change color to red if hit, purple if miss
-}
-
-// Call initializeGame to start the game setup
-initializeGame();
+createGrid("user");
+createGrid("computer");

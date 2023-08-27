@@ -1,15 +1,26 @@
 import { Gameboard } from "./Gameboard.js";
 
 export class Player {
-  constructor(isComputer = false) {
-    this.isComputer = isComputer;
-    this.gameBoard = new Gameboard();
-    this.previousAttacks = [];
+  constructor() {}
+
+  isMoveLegal(enemyGameboard, row, column) {
+    for (let i = 0; i < enemyGameboard.allAttacks.length; i++) {
+      if (
+        row === enemyGameboard.allAttacks[i].row &&
+        column === enemyGameboard.allAttacks[i].column
+      ) {
+        return false;
+      }
+    }
+    return true;
   }
 
   attack(enemyGameboard, row, column) {
-    enemyGameboard.receiveAttack(row, column);
-    this.previousAttacks.push({ row, column });
+    if (this.isMoveLegal(enemyGameboard, row, column)) {
+      enemyGameboard.receiveAttack(row, column);
+    } else {
+      return "That move has already been made, choose another";
+    }
   }
 
   makeRandomMove(enemyGameboard) {
@@ -17,13 +28,8 @@ export class Player {
     do {
       row = Math.floor(Math.random() * 10);
       column = Math.floor(Math.random() * 10);
-    } while (
-      this.previousAttacks.some(
-        (attack) => attack.row === row && attack.column === column
-      )
-    );
+    } while (!this.isMoveLegal(enemyGameboard, row, column));
 
-    this.attack(enemyGameboard, row, column);
-    return [row, column]; // Return the row and column as an array
+    return { row, column };
   }
 }

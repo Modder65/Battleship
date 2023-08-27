@@ -1,61 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1692824944358" clover="3.2.0">
-  <project timestamp="1692824944358" name="All files">
-    <metrics statements="46" coveredstatements="44" conditionals="21" coveredconditionals="20" methods="13" coveredmethods="13" elements="80" coveredelements="77" complexity="0" loc="46" ncloc="46" packages="1" files="3" classes="3"/>
+<coverage generated="1693083663131" clover="3.2.0">
+  <project timestamp="1693083663131" name="All files">
+    <metrics statements="40" coveredstatements="40" conditionals="14" coveredconditionals="13" methods="10" coveredmethods="10" elements="64" coveredelements="63" complexity="0" loc="40" ncloc="40" packages="1" files="3" classes="3"/>
     <file name="Gameboard.js" path="/home/alexgreen65/repos/Battleship/src/Gameboard.js">
-      <metrics statements="28" coveredstatements="26" conditionals="16" coveredconditionals="15" methods="6" coveredmethods="6"/>
-      <line num="5" count="14" type="stmt"/>
-      <line num="6" count="14" type="stmt"/>
-      <line num="7" count="14" type="stmt"/>
-      <line num="11" count="6" type="stmt"/>
-      <line num="12" count="6" type="stmt"/>
-      <line num="13" count="6" type="stmt"/>
-      <line num="14" count="18" type="cond" truecount="2" falsecount="0"/>
-      <line num="15" count="18" type="cond" truecount="2" falsecount="0"/>
-      <line num="18" count="18" type="cond" truecount="1" falsecount="1"/>
-      <line num="20" count="18" type="cond" truecount="2" falsecount="0"/>
-      <line num="23" count="0" type="stmt"/>
-      <line num="24" count="0" type="stmt"/>
-      <line num="27" count="18" type="stmt"/>
-      <line num="28" count="18" type="stmt"/>
+      <metrics statements="25" coveredstatements="25" conditionals="8" coveredconditionals="7" methods="3" coveredmethods="3"/>
+      <line num="5" count="9" type="stmt"/>
+      <line num="6" count="9" type="stmt"/>
+      <line num="7" count="9" type="stmt"/>
+      <line num="11" count="4" type="stmt"/>
+      <line num="12" count="4" type="stmt"/>
+      <line num="13" count="4" type="stmt"/>
+      <line num="15" count="12" type="cond" truecount="2" falsecount="0"/>
+      <line num="16" count="3" type="stmt"/>
+      <line num="17" count="3" type="stmt"/>
+      <line num="18" count="3" type="stmt"/>
+      <line num="19" count="9" type="cond" truecount="1" falsecount="1"/>
+      <line num="20" count="9" type="stmt"/>
+      <line num="21" count="9" type="stmt"/>
+      <line num="22" count="9" type="stmt"/>
+      <line num="25" count="4" type="stmt"/>
+      <line num="26" count="4" type="stmt"/>
+      <line num="27" count="4" type="stmt"/>
       <line num="31" count="6" type="stmt"/>
-      <line num="32" count="6" type="stmt"/>
-      <line num="33" count="6" type="stmt"/>
-      <line num="37" count="109" type="stmt"/>
-      <line num="38" count="109" type="stmt"/>
-      <line num="39" count="6" type="stmt"/>
-      <line num="40" count="11" type="cond" truecount="2" falsecount="0"/>
+      <line num="32" count="2" type="stmt"/>
+      <line num="33" count="5" type="cond" truecount="2" falsecount="0"/>
+      <line num="37" count="1" type="stmt"/>
+      <line num="38" count="1" type="stmt"/>
+      <line num="39" count="1" type="stmt"/>
+      <line num="43" count="5" type="stmt"/>
       <line num="44" count="5" type="stmt"/>
-      <line num="45" count="5" type="stmt"/>
-      <line num="46" count="5" type="stmt"/>
-      <line num="49" count="6" type="cond" truecount="2" falsecount="0"/>
-      <line num="51" count="109" type="cond" truecount="2" falsecount="0"/>
-      <line num="52" count="104" type="stmt"/>
-      <line num="57" count="2" type="stmt"/>
     </file>
     <file name="Player.js" path="/home/alexgreen65/repos/Battleship/src/Player.js">
-      <metrics statements="10" coveredstatements="10" conditionals="3" coveredconditionals="3" methods="4" coveredmethods="4"/>
-      <line num="5" count="4" type="stmt"/>
-      <line num="6" count="4" type="stmt"/>
-      <line num="7" count="4" type="stmt"/>
-      <line num="11" count="103" type="stmt"/>
-      <line num="12" count="103" type="stmt"/>
-      <line num="17" count="101" type="stmt"/>
-      <line num="18" count="378" type="stmt"/>
-      <line num="19" count="378" type="stmt"/>
-      <line num="22" count="17462" type="cond" truecount="2" falsecount="0"/>
-      <line num="26" count="101" type="stmt"/>
+      <metrics statements="11" coveredstatements="11" conditionals="6" coveredconditionals="6" methods="4" coveredmethods="4"/>
+      <line num="7" count="6" type="stmt"/>
+      <line num="8" count="3" type="cond" truecount="2" falsecount="0"/>
+      <line num="12" count="2" type="stmt"/>
+      <line num="15" count="4" type="stmt"/>
+      <line num="19" count="2" type="cond" truecount="2" falsecount="0"/>
+      <line num="20" count="1" type="stmt"/>
+      <line num="22" count="1" type="stmt"/>
+      <line num="28" count="1" type="stmt"/>
+      <line num="29" count="1" type="stmt"/>
+      <line num="30" count="1" type="stmt"/>
+      <line num="33" count="1" type="stmt"/>
     </file>
     <file name="Ship.js" path="/home/alexgreen65/repos/Battleship/src/Ship.js">
-      <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
-      <line num="3" count="10" type="stmt"/>
-      <line num="4" count="10" type="stmt"/>
-      <line num="5" count="10" type="stmt"/>
-      <line num="9" count="9" type="stmt"/>
-      <line num="13" count="4" type="cond" truecount="2" falsecount="0"/>
-      <line num="14" count="2" type="stmt"/>
-      <line num="16" count="2" type="stmt"/>
-      <line num="18" count="4" type="stmt"/>
+      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+      <line num="3" count="8" type="stmt"/>
+      <line num="4" count="8" type="stmt"/>
+      <line num="8" count="7" type="stmt"/>
+      <line num="12" count="2" type="stmt"/>
     </file>
   </project>
 </coverage>

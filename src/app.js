@@ -4,43 +4,51 @@ import "./Gameboard.js";
 import "./Player.js";
 import "./style.css";
 
+// Import classes from other files
 import { Gameboard } from "./Gameboard.js";
 import { Player } from "./Player.js";
 
+// Initialize gameboards for user and computer
 let userBoard = new Gameboard();
 let computerBoard = new Gameboard();
 
+// Initialize players
 let user = new Player();
 let computer = new Player();
 
+// Initialize game variables
 let currentShipLength = 5;
 let shipsPlaced = 0;
 let currentOrientation = "horizontal";
-
 let userRedSquares = 0;
 let computerRedSquares = 0;
-let gameEnded = false;
+let gameEnded = false; // New variable to track if the game has ended
 
+// Get DOM elements
 const rotateButton = document.querySelector("#rotateButton");
 const startButton = document.querySelector("#startButton");
 const startOverButton = document.querySelector(".startOverButton");
 
+// Event listener for rotating ship orientation
 rotateButton.addEventListener("click", function () {
   currentOrientation =
     currentOrientation === "horizontal" ? "vertical" : "horizontal";
 });
 
+// Event listener for starting the game
 startButton.addEventListener("click", function () {
   if (shipsPlaced !== 5) {
     alert("you Havent finished placing all of your ships");
     return;
   } else {
+    // Enable computer board and disable buttons
     document
       .querySelector(".computerBoardContainer")
       .classList.remove("disabled");
-
     rotateButton.classList.add("disabled");
     startButton.classList.add("disabled");
+
+    // Place computer's ships and set up event listeners for user attacks
     placeComputerShips();
     let computerGridCells = document.querySelectorAll(".grid-cell-computer");
     computerGridCells.forEach((cell) => {
@@ -49,11 +57,13 @@ startButton.addEventListener("click", function () {
   }
 });
 
+// Event listener for starting over
 startOverButton.addEventListener("click", function () {
   // Reload the page to start over
   location.reload();
 });
 
+// Function to create both UI gameboards
 function createGrid(player) {
   let gridContainer = document.querySelector(`.${player}GridContainer`);
   let row = 0;
@@ -79,6 +89,7 @@ function createGrid(player) {
   }
 }
 
+// Function to highlight ship placement
 function highlightPlacement(event) {
   const hoveredCell = event.target;
   const row = parseInt(hoveredCell.getAttribute("data-row"));
@@ -104,6 +115,7 @@ function highlightPlacement(event) {
   }
 }
 
+// Function to confirm ship placement on gameboard
 function confirmPlacement(event) {
   let startRow = parseInt(event.target.getAttribute("data-row"));
   let startColumn = parseInt(event.target.getAttribute("data-col"));
@@ -145,6 +157,7 @@ function confirmPlacement(event) {
   }
 }
 
+// Function to randomly place computers ships on gameboard
 function placeComputerShips() {
   const shipLengths = [5, 4, 3, 3, 2];
   const orientations = ["horizontal", "vertical"];
@@ -183,6 +196,7 @@ function placeComputerShips() {
   });
 }
 
+// Function to handle user's attack
 function handleUserAttack(event) {
   const row = parseInt(event.target.getAttribute("data-row"));
   const column = parseInt(event.target.getAttribute("data-col"));
@@ -206,12 +220,14 @@ function handleUserAttack(event) {
     cell.style.backgroundColor = "purple";
   }
 
+  // Added a check for gameEnded before calling gameOver() so alert message doesnt fire twice
   if (!gameEnded) {
     gameOver();
   }
   handleComputerAttack();
 }
 
+// Function to handle computer's randomly generated attacks
 function handleComputerAttack() {
   const { row, column } = computer.makeRandomMove(userBoard);
   computer.attack(userBoard, row, column);
@@ -233,6 +249,7 @@ function handleComputerAttack() {
   }
 }
 
+// Function to check if any ship is sunk
 function checkIfSunk(gameboard, player) {
   gameboard.ships.forEach((shipEntry) => {
     if (shipEntry.ship.isSunk() && !gameboard.sunkenShips.has(shipEntry)) {
@@ -246,6 +263,7 @@ function checkIfSunk(gameboard, player) {
   });
 }
 
+// Function to check for game over
 function gameOver() {
   checkIfSunk(userBoard, "user");
   checkIfSunk(computerBoard, "computer");
